@@ -13,6 +13,28 @@ type PerformanceSummary = {
   performances: Performance[];
 };
 
+function calculateAmount(play: Play, performance: Performance) {
+  let totalAmount = 0;
+  switch (play.type) {
+    case "tragedy":
+      totalAmount = 40000;
+      if (performance.audience > 30) {
+        totalAmount += 1000 * (performance.audience - 30);
+      }
+      break;
+    case "comedy":
+      totalAmount = 30000;
+      if (performance.audience > 20) {
+        totalAmount += 10000 + 500 * (performance.audience - 20);
+      }
+      totalAmount += 300 * performance.audience;
+      break;
+    default:
+      throw new Error(`unknown type: ${play.type}`);
+  }
+  return totalAmount;
+}
+
 export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
   let totalAmount = 0;
   let volumeCredits = 0;
@@ -23,27 +45,6 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
     minimumFractionDigits: 2,
   }).format;
 
-  function calculateAmount(play: Play, performance: Performance) {
-    let totalAmount = 0;
-    switch (play.type) {
-      case "tragedy":
-        totalAmount = 40000;
-        if (performance.audience > 30) {
-          totalAmount += 1000 * (performance.audience - 30);
-        }
-        break;
-      case "comedy":
-        totalAmount = 30000;
-        if (performance.audience > 20) {
-          totalAmount += 10000 + 500 * (performance.audience - 20);
-        }
-        totalAmount += 300 * performance.audience;
-        break;
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
-    return totalAmount;
-  }
 
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
