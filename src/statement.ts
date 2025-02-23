@@ -37,9 +37,12 @@ function calculateAmount(play: Play, performance: Performance) {
 
 function calculateCreditsFor(perf: Performance, play: Play) {
   let credits:number = 0;
-  credits += Math.max(perf.audience - 30, 0);
+  const baseCredits =Math.max(perf.audience - 30, 0);
+  credits +=  baseCredits;
   // add extra credit for every ten comedy attendees
-  if ("comedy" === play.type) credits += Math.floor(perf.audience / 5);
+  const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
+  if ("comedy" === play.type)
+    credits += extraCreditsForComedyAttendees;
   return credits;
 }
 
