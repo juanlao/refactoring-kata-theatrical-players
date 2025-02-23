@@ -35,15 +35,12 @@ function calculateAmount(play: Play, performance: Performance) {
   return totalAmount;
 }
 
-function calculateCreditsFor(perf: Performance, play: Play) {
-  let credits:number = 0;
+function calculateCreditsFor(play: Play, perf: Performance) {
   const baseCredits =Math.max(perf.audience - 30, 0);
-  credits +=  baseCredits;
-  // add extra credit for every ten comedy attendees
   const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
-  if ("comedy" === play.type)
-    credits += extraCreditsForComedyAttendees;
-  return credits;
+  return ("comedy" === play.type)
+      ? baseCredits + extraCreditsForComedyAttendees
+      : baseCredits;
 }
 
 export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
@@ -61,7 +58,7 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
     // add volume credits
-    volumeCredits += calculateCreditsFor(perf, play);
+    volumeCredits += calculateCreditsFor(play, perf);
     // print line for this order
     result += ` ${play.name}: ${format(thisAmount / 100)} (${
       perf.audience
