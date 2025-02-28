@@ -1,6 +1,11 @@
+enum PlayType{
+    Tragedy= "tragedy",
+    Comedy ="comedy"
+}
+
 export type Play = {
     name: string;
-    type: string;
+    type: PlayType;
 };
 export type Performance = {
     playID: string;
@@ -12,25 +17,26 @@ export type PerformanceSummary = {
 };
 
 export function calculateAmount(play: Play, performance: Performance) {
+    const isUnknownPlayType = !Object.values(PlayType).includes(play.type);
+    if(isUnknownPlayType) {
+        throw new Error(`unknown type: ${play.type}`);
+    }
     let totalAmount = 0;
     switch (play.type) {
-        case "tragedy":
+        case PlayType.Tragedy:
             totalAmount = 40000;
             if (performance.audience > 30) {
                 totalAmount += 1000 * (performance.audience - 30);
             }
-            break;
-        case "comedy":
+            return totalAmount;
+        case PlayType.Comedy:
             totalAmount = 30000;
             if (performance.audience > 20) {
                 totalAmount += 10000 + 500 * (performance.audience - 20);
             }
             totalAmount += 300 * performance.audience;
-            break;
-        default:
-            throw new Error(`unknown type: ${play.type}`);
+            return totalAmount;
     }
-    return totalAmount;
 }
 
 export function calculateTotalAmount(summary: PerformanceSummary, plays: Record<string, Play>) {
@@ -43,7 +49,7 @@ export function calculateTotalAmount(summary: PerformanceSummary, plays: Record<
 function calculateCreditsFor(play: Play, perf: Performance) {
     const baseCredits = Math.max(perf.audience - 30, 0);
     const extraCreditsForComedyAttendees = Math.floor(perf.audience / 5);
-    return ("comedy" === play.type)
+    return (PlayType.Comedy === play.type)
         ? baseCredits + extraCreditsForComedyAttendees
         : baseCredits;
 }
