@@ -52,12 +52,10 @@ function formatAsUSD(thisAmount: number) {
 }
 
 function calculateTotalCredits(summary: PerformanceSummary, plays: Record<string, Play>) {
-  let volumeCredits = 0;
-  for (let perf of summary.performances) {
-    const play = plays[perf.playID];
-    volumeCredits += calculateCreditsFor(play, perf);
-  }
-  return volumeCredits;
+  return summary.performances.reduce((accumulatedCredits, performance) => {
+    const play = plays[performance.playID];
+    return accumulatedCredits + calculateCreditsFor(play, performance);
+  }, 0)
 }
 
 export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
@@ -70,8 +68,7 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
     totalAmount += thisAmount;
   }
 
-  let volumeCredits = calculateTotalCredits(summary, plays);
   result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `You earned ${(calculateTotalCredits(summary, plays))} credits\n`;
   return result;
 }
