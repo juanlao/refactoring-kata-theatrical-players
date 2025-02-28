@@ -1,4 +1,4 @@
-import { statement } from "../src/statement";
+import { statementPrinter } from "../src/statementPrinter";
 
 test("generates a detailed statement for a given performance summary with mixed play types", () => {
   //arrange
@@ -6,7 +6,7 @@ test("generates a detailed statement for a given performance summary with mixed 
   //act
   const plays = createAnExamplePlays();
   //assert
-  expect(statement(aSummary, plays)).toEqual(`Statement for BigCo
+  expect(statementPrinter(aSummary, plays)).toEqual(`Statement for BigCo
  Hamlet: $650.00 (55 seats)
  As You Like It: $580.00 (35 seats)
  Othello: $500.00 (40 seats)
@@ -21,7 +21,7 @@ test("does not allow an performance summary with unknown play types", () => {
   //act
   const plays = createAnotherExamplePlays();
   //assert
-  expect(() => statement(invoice, plays)).toThrow(/unknown type/);
+  expect(() => statementPrinter(invoice, plays)).toThrow(/unknown type/);
 });
 
 function createAnPerformanceSummary() {
