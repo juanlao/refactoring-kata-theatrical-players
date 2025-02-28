@@ -58,12 +58,8 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
-    // add volume credits
     volumeCredits += calculateCreditsFor(play, perf);
-    // print line for this order
-    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${
-      perf.audience
-    } seats)\n`;
+    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${ perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
   result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
