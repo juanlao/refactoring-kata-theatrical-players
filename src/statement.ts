@@ -14,12 +14,16 @@ type PerformanceSummary = {
 };
 
 export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
+  return renderStatementAsPlainText(summary, plays);
+}
+
+function renderStatementAsPlainText(summary: PerformanceSummary, plays: Record<string, Play>) {
   let result = `Statement for ${summary.customer}\n`;
 
   for (let perf of summary.performances) {
     const play = plays[perf.playID];
     let thisAmount = calculateAmount(play, perf);
-    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${ perf.audience} seats)\n`;
+    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${perf.audience} seats)\n`;
   }
 
   let totalAmount = calculateTotalAmount(summary, plays);
