@@ -13,6 +13,21 @@ type PerformanceSummary = {
   performances: Performance[];
 };
 
+export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
+  let result = `Statement for ${summary.customer}\n`;
+
+  for (let perf of summary.performances) {
+    const play = plays[perf.playID];
+    let thisAmount = calculateAmount(play, perf);
+    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${ perf.audience} seats)\n`;
+  }
+
+  let totalAmount = calculateTotalAmount(summary, plays);
+  result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
+  result += `You earned ${(calculateTotalCredits(summary, plays))} credits\n`;
+  return result;
+}
+
 function calculateAmount(play: Play, performance: Performance) {
   let totalAmount = 0;
   switch (play.type) {
@@ -33,6 +48,13 @@ function calculateAmount(play: Play, performance: Performance) {
       throw new Error(`unknown type: ${play.type}`);
   }
   return totalAmount;
+}
+
+function calculateTotalAmount(summary: PerformanceSummary, plays: Record<string, Play>) {
+  return summary.performances.reduce((accumulatedAmount, performance)=>{
+    const play = plays[performance.playID];
+    return accumulatedAmount + calculateAmount(play, performance);
+  },0)
 }
 
 function calculateCreditsFor(play: Play, perf: Performance) {
@@ -58,17 +80,4 @@ function calculateTotalCredits(summary: PerformanceSummary, plays: Record<string
   }, 0)
 }
 
-export function statement(summary: PerformanceSummary, plays: Record<string, Play>) {
-  let totalAmount = 0;
-  let result = `Statement for ${summary.customer}\n`;
-  for (let perf of summary.performances) {
-    const play = plays[perf.playID];
-    let thisAmount = calculateAmount(play, perf);
-    result += ` ${play.name}: ${(formatAsUSD(thisAmount))} (${ perf.audience} seats)\n`;
-    totalAmount += thisAmount;
-  }
 
-  result += `Amount owed is ${formatAsUSD(totalAmount)}\n`;
-  result += `You earned ${(calculateTotalCredits(summary, plays))} credits\n`;
-  return result;
-}
