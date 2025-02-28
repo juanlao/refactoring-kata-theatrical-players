@@ -17,6 +17,18 @@ export function statement(summary: PerformanceSummary, plays: Record<string, Pla
   return renderStatementAsPlainText(summary, plays);
 }
 
+type Statement={
+ readonly customer: string;
+ readonly performances: PerformanceRow[];
+ readonly totalAmountInUSD: string;
+ readonly totalCredits: number;
+}
+
+type PerformanceRow = {
+ readonly playName:string;
+ readonly audience: number;
+ readonly amountInUsd: string;
+}
 function renderStatementAsPlainText(summary: PerformanceSummary, plays: Record<string, Play>) {
   let result = `Statement for ${summary.customer}\n`;
 
